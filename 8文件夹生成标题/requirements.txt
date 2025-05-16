@@ -1,0 +1,6 @@
+# 基础依赖
+openpyxl>=3.1.2    # Excel文件操作
+requests>=2.31.0   # API请求处理
+
+# 开发依赖（可选）
+python-dotenv>=1.0.0  # 环境变量管理
