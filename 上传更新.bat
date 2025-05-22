@@ -1,2 +1,7 @@
+@echo off
 chcp 65001
-git push -u origin master -f
+git add .
+set /p ps=请输入注释:
+git commit -m "ps"
+git push -u origin master
+pause
