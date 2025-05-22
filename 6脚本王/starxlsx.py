@@ -81,8 +81,8 @@ def write_image_names_to_excel(image_folder, source_excel, output_suffix=""):
         
         # 固定值配置
         fixed_values = {
-            7: "老六本土",            # G列：店铺名
-            8: "602908296853942",    # H列：商品规格-货号
+            7: "TEMU户外2店",            # G列：店铺名
+            8: "605078396235007",    # H列：商品规格-货号
             11: "全部",              # K列：同规格应用
             13: "1",                 # M列：主图索引
             14: "1"                  # N列：详情图索引
