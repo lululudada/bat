@@ -118,19 +118,20 @@ def generate_outdoor_content(image_base64):
         "Authorization": f"Bearer {API_KEY}"
     }
 
-    prompt = """Como experto en comercio electrónico mexicano, genera para este producto outdoor:
-1. TÍTULO en español con:
-   - Palabras clave populares en México
-   - Ventajas del diseño
-   - Lenguaje coloquial local
-   - Máx 80 caracteres
-   - Prohibido caracteres especiales
+    prompt = """作为墨西哥本土电商专家，请为户外产品生成符合以下要求的西班牙标题：
+1. 西班牙文标题:
+- 优先使用SEMrush和Google Keyword Planner中墨西哥地区搜索量前10%的户外品类关键词
+- 标题结构：核心词(产品类型)+长尾词(使用场景)+设计优势+地域元素
+- 融入墨西哥西班牙语口语表达（如"Resistente al clima"替代"Weatherproof"）
+- 严格控制在80-100字符之间
+- 禁止使用特殊符号/军事相关词汇
 
-2. DESCRIPCIÓN con:
-   - 3 ventajas principales
-   - Materiales duraderos
-   - Escenarios de uso típicos
-   - Máx 200 caracteres
+2. 描述:
+   - 主要优势
+   - 材料耐用性
+   - 典型的使用场景
+   - 控制在200-300字符
+   - 进行目标人群分析（25-35岁墨西哥户外爱好者），再生成描述方案
 
 Formato requerido:
 TÍTULO: [texto]

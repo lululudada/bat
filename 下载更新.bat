@@ -1,2 +1,2 @@
 chcp 65001
-git@github.com:lululudada/bat.git
+git clone https://github.com/lululudada/bat.git
