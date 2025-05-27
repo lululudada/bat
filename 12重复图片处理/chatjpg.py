@@ -27,7 +27,7 @@ def remove_duplicates():
     files = []
     for filename in os.listdir(target_folder):
         path = os.path.join(target_folder, filename)
-        if os.path.isfile(path) and path.lower().endswith( ('.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp') ):
+        if os.path.isfile(path) and path.lower().endswith( ('.png', '.jpg', '.jpeg', '.bmp', '.gif', '.tiff', '.webp', '.jfif') ):
             files.append(path)
     
     # 通过哈希识别重复项
