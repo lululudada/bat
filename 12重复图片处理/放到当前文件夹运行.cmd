@@ -1,1 +1,1 @@
-python chatjpg.py
+python deljpg.py
