@@ -5,7 +5,7 @@ import math
 
 def process_images():
     # 支持的图片扩展名
-    supported_extensions = ('.png', '.jpg', '.jpeg', '.bmp', '.gif', '.tiff', '.webp')
+    supported_extensions = ('.png', '.jpg', '.jpeg', '.bmp', '.gif', '.tiff', '.webp', '.jfif')
     
     # 设置文件夹路径
     current_folder = os.getcwd()
