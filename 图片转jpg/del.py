@@ -59,6 +59,7 @@ def clear_folders():
         except Exception as e:
             print(f"[错误] 清理文件夹时出错: {folder} - {str(e)}")
     
+    
     # 显示结果
     print("\n" + "="*40)
     print(f"清理完成！共删除 {deleted_count} 个项目")
