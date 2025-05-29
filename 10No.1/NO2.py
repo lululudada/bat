@@ -114,8 +114,8 @@ def write_image_names_to_excel(image_folder, source_excel, output_suffix="_已�
                 sheet.cell(row=i, column=col, value=val)
 
         # 再次确保删除O列及之后的列（防止新增列）
-        if sheet.max_column >= 15:
-            sheet.delete_cols(15, sheet.max_column - 14)
+        #if sheet.max_column >= 15:
+        #    sheet.delete_cols(15, sheet.max_column - 14)
 
         # 保存新文件
         wb.save(output_excel)
