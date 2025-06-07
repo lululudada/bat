@@ -7,7 +7,7 @@ from tqdm import tqdm
 # 配置参数
 EXCEL_FILE = "data.xlsx"  # 改为你的Excel文件名
 SAVE_FOLDER = "downloaded_images"  # 保存图片的文件夹名
-COLUMN_LETTER = "U"  # 要处理的列
+COLUMN_LETTER = "F"  # 要处理的列
 START_ROW = 2  # 起始行
 MAX_THREADS = 100  # 最大线程数
 

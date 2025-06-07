@@ -41,3 +41,18 @@
 2025-05-20 01:34:45,807 - ERROR - API请求失败：'choices'
 2025-05-20 01:34:45,808 - ERROR - API请求失败：'choices'
 2025-05-20 01:34:46,979 - ERROR - API请求失败：'choices'
+2025-06-08 01:48:18,841 - ERROR - API请求失败：HTTPSConnectionPool(host='xiaoai.plus', port=443): Max retries exceeded with url: /v1/chat/completions (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x0000024ECFF05A00>, 'Connection to xiaoai.plus timed out. (connect timeout=35)'))
+2025-06-08 01:48:20,787 - ERROR - API请求失败：400 Client Error: Bad Request for url: https://xiaoai.plus/v1/chat/completions
+2025-06-08 01:48:22,622 - ERROR - API请求失败：400 Client Error: Bad Request for url: https://xiaoai.plus/v1/chat/completions
+2025-06-08 01:48:25,644 - ERROR - API请求失败：HTTPSConnectionPool(host='xiaoai.plus', port=443): Max retries exceeded with url: /v1/chat/completions (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x0000024ECFED9700>, 'Connection to xiaoai.plus timed out. (connect timeout=35)'))
+2025-06-08 01:48:36,179 - ERROR - API请求失败：HTTPSConnectionPool(host='xiaoai.plus', port=443): Max retries exceeded with url: /v1/chat/completions (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x0000024ECFEDA120>, 'Connection to xiaoai.plus timed out. (connect timeout=35)'))
+2025-06-08 01:48:40,002 - ERROR - API请求失败：400 Client Error: Bad Request for url: https://xiaoai.plus/v1/chat/completions
+2025-06-08 01:48:40,783 - ERROR - API请求失败：HTTPSConnectionPool(host='xiaoai.plus', port=443): Max retries exceeded with url: /v1/chat/completions (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x0000024ECFEB6FF0>, 'Connection to xiaoai.plus timed out. (connect timeout=35)'))
+2025-06-08 01:48:53,133 - ERROR - API请求失败：400 Client Error: Bad Request for url: https://xiaoai.plus/v1/chat/completions
+2025-06-08 01:49:00,459 - ERROR - API请求失败：HTTPSConnectionPool(host='xiaoai.plus', port=443): Max retries exceeded with url: /v1/chat/completions (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x0000024ECDEBF8F0>, 'Connection to xiaoai.plus timed out. (connect timeout=35)'))
+2025-06-08 01:49:11,350 - ERROR - API请求失败：400 Client Error: Bad Request for url: https://xiaoai.plus/v1/chat/completions
+2025-06-08 01:49:16,291 - ERROR - API请求失败：HTTPSConnectionPool(host='xiaoai.plus', port=443): Max retries exceeded with url: /v1/chat/completions (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x0000024ECDF1F980>, 'Connection to xiaoai.plus timed out. (connect timeout=35)'))
+2025-06-08 01:49:24,287 - ERROR - API请求失败：HTTPSConnectionPool(host='xiaoai.plus', port=443): Max retries exceeded with url: /v1/chat/completions (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x0000024ECFEB6CC0>, 'Connection to xiaoai.plus timed out. (connect timeout=35)'))
+2025-06-08 01:49:27,223 - ERROR - API请求失败：HTTPSConnectionPool(host='xiaoai.plus', port=443): Max retries exceeded with url: /v1/chat/completions (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x0000024ECE2531A0>, 'Connection to xiaoai.plus timed out. (connect timeout=35)'))
+2025-06-08 01:49:44,121 - ERROR - API请求失败：HTTPSConnectionPool(host='xiaoai.plus', port=443): Read timed out. (read timeout=35)
+2025-06-08 01:49:44,323 - ERROR - API请求失败：HTTPSConnectionPool(host='xiaoai.plus', port=443): Max retries exceeded with url: /v1/chat/completions (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x0000024ECDF638F0>, 'Connection to xiaoai.plus timed out. (connect timeout=35)'))
