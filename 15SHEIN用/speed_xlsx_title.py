@@ -120,7 +120,7 @@ def generate_title(image_base64):
                 {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{image_base64}"}}
             ]
         }],
-        "max_tokens": 200  # 限制最大token数
+        "max_tokens": 250  # 限制最大token数
     }
     
     try:
