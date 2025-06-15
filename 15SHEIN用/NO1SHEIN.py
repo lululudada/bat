@@ -37,6 +37,7 @@ def process_images():
     
     # 参数设置
     min_width, min_height = 1350, 1350
+    max_side_limit = 3000  # 新增：最大边长限制
     target_ratio = 3/4  # 3:4比例
 
     # 获取起始编号
@@ -77,15 +78,42 @@ def process_images():
                     print(f"新文件名: {new_filename}")
                     print(f"原始尺寸: {orig_width}x{orig_height}")
 
-                    # 第一步：调整基础分辨率
-                    if orig_width < min_width or orig_height < min_height:
-                        ratio = max(min_width/orig_width, min_height/orig_height)
-                        new_width = math.ceil(orig_width * ratio)
-                        new_height = math.ceil(orig_height * ratio)
+                    # 第一步：智能尺寸调整（同时满足最小1350px和最大3000px要求）
+                    min_side = min(orig_width, orig_height)
+                    max_side = max(orig_width, orig_height)
+                    
+                    # 计算满足最小尺寸和最大尺寸的缩放比例
+                    ratio_min = min_width / min_side if min_side < min_width else 1
+                    ratio_max = max_side_limit / max_side if max_side > max_side_limit else 1
+                    
+                    # 确定最终缩放比例
+                    if min_side < min_width and max_side > max_side_limit:
+                        # 需要同时放大和缩小的情况
+                        if min_side * ratio_max >= min_width:
+                            scale_ratio = ratio_max  # 优先满足最大边限制
+                            reason = f"同时满足最小边{min_width}px和最大边{max_side_limit}px要求"
+                        else:
+                            scale_ratio = ratio_min  # 优先满足最小边要求
+                            reason = f"优先满足最小边{min_width}px要求（无法同时满足最大边限制）"
+                    elif min_side < min_width:
+                        scale_ratio = ratio_min
+                        reason = f"满足最小边{min_width}px要求"
+                    elif max_side > max_side_limit:
+                        scale_ratio = ratio_max
+                        reason = f"满足最大边{max_side_limit}px要求"
+                    else:
+                        scale_ratio = 1
+                        reason = "尺寸已满足要求"
+                    
+                    # 执行缩放（当比例不等于1时）
+                    if abs(scale_ratio - 1) > 1e-5:
+                        new_width = round(orig_width * scale_ratio)
+                        new_height = round(orig_height * scale_ratio)
                         img = img.resize((new_width, new_height), Image.LANCZOS)
-                        print(f"基础放大: {orig_width}x{orig_height} → {new_width}x{new_height}")
+                        print(f"智能调整: {orig_width}x{orig_height} → {new_width}x{new_height} | 原因: {reason}")
                     else:
                         new_width, new_height = orig_width, orig_height
+                        print(f"智能调整: 保持原始尺寸 | 原因: {reason}")
 
                     # 第二步：3:4比例裁切
                     current_ratio = new_width / new_height
@@ -109,11 +137,16 @@ def process_images():
                     # 第三步：最终分辨率验证
                     final_width, final_height = img.size
                     if final_width < min_width or final_height < min_height:
+                        # 裁切后尺寸不足，需要放大（但不超过最大限制）
                         ratio = max(min_width/final_width, min_height/final_height)
+                        # 应用放大但不超过最大限制
+                        if max(final_width * ratio, final_height * ratio) > max_side_limit:
+                            ratio = min(ratio, max_side_limit / max(final_width, final_height))
+                        
                         final_width = math.ceil(final_width * ratio)
                         final_height = math.ceil(final_height * ratio)
                         img = img.resize((final_width, final_height), Image.LANCZOS)
-                        print(f"最终调整: → {final_width}x{final_height}")
+                        print(f"最终调整: → {final_width}x{final_height} (保证最小边要求)")
 
                     # 确定输出路径
                     output_path = os.path.join(output_root, new_filename)
@@ -154,7 +187,8 @@ if __name__ == "__main__":
     print("- 输出到'处理后图片'保持相同结构")
     print("- 自动连续编号（格式：JBY00001）")
     print("- 自动裁切到3:4比例")
-    print("- 保证分辨率≥1024x1024")
+    print("- 保证分辨率≥1350x1350")
+    print("- 限制最大边长≤3000px")  # 新增功能说明
     print("- 文件大小≤1.9MB\n")
     process_images()
     input("\n按Enter键退出...")
