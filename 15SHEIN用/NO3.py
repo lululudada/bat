@@ -78,7 +78,7 @@ def process_images():
                     # 如果质量降至50%仍不满足，强制保存并警告
                     with open(output_path, 'wb') as f:
                         img.save(output_path, format=img_format, quality=50)
-                    print(f"警告: {filename} 文件大小可能超过19MB")
+                    print(f"警告: {filename} 文件大小可能超过1.9MB")
 
         except Exception as e:
             print(f"处理失败: {filename} - {str(e)}")
