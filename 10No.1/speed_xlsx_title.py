@@ -97,16 +97,14 @@ def generate_title(image_base64):
     prompt_text = (
 "你是墨西哥Temu平台的本地文案专家，请根据下列参数，生成一个吸引墨西哥用户点击的商品标题（西班牙语）："
 "- 图案：{图案简述}"
-"- 性别：男 / 女"
 "- 风格：休闲 / 时尚 / 节日 / 浪漫 / 动漫"
 "- 使用场景：日常 / 约会 / 夏季出游 / 派对"
 "- 卖点关键词：搞笑 / 优雅 / 舒适 / 个性 / 低价 / 正在促销"
 "标题要求："
 "1. 使用热搜关键词（如“playeras de mujer en oferta”、“tops de mujer”、“ropa en tendencia”、“playeras para hombre”等）；"
 "2. 把图案和风格亮点放在标题前部，引发点击兴趣；"
-"3. 保持语言自然地道，不要强行放入材质或克重；"
-"4. 字符数不超过250；"
-"5. 尾部突出促销信息（如“en oferta”、“precio especial”）。"
+"3. 保持语言自然地道，字符数不超过350；"
+"4. 不要有表情等符号，上传不了"
 "输出一个自然流畅、有吸引力的西班牙语标题。"
 
     )
@@ -120,7 +118,7 @@ def generate_title(image_base64):
                 {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{image_base64}"}}
             ]
         }],
-        "max_tokens": 200  # 限制最大token数
+        "max_tokens": 250  # 限制最大token数
     }
     
     try:
