@@ -4,7 +4,7 @@ import shutil
 from io import BytesIO
 
 def process_images():
-    input_dir = "处理后图片"
+    input_dir = "待处理图片"
     output_dir = "处理后图片1比1"
     
     # 创建输出目录
