@@ -65,7 +65,8 @@ def process_images():
                     img = img.resize(new_size, Image.LANCZOS)
                 
                 # 准备输出路径
-                output_path = os.path.join(output_dir, f"processed_{filename}")
+                #output_path = os.path.join(output_dir, f"processed_{filename}") 
+                output_path = os.path.join(output_dir, f"{filename}")
                 
                 # 优化文件大小
                 buffer = BytesIO()
