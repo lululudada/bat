@@ -9,6 +9,7 @@ def process_images():
     
     # 创建输出目录
     os.makedirs(output_dir, exist_ok=True)
+    os.makedirs(input_dir, exist_ok=True)
     
     # 支持的图片格式
     image_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.webp']

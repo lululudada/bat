@@ -6,10 +6,11 @@ import math
 
 def process_images():
     input_dir = "待处理图片"
-    output_dir = "已处理图片"
+    output_dir = "处理后图片"
     
     # 创建输出目录
     os.makedirs(output_dir, exist_ok=True)
+    os.makedirs(input_dir, exist_ok=True)
     
     # 支持的图片格式
     image_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.webp']
