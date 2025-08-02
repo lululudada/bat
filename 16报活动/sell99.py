@@ -49,7 +49,7 @@ def process_bulk_upload_template():
     print(f"总货品数量: {total_products}")
     
     # 计算需要拆分的文件数量
-    num_files = (total_products + 1999) // 2000  # 向上取整
+    num_files = (total_products + 1998) // 1999  # 向上取整
     print(f"需要拆分成 {num_files} 个文件")
     
     # 获取原始工作簿的所有工作表（除了Template）
@@ -76,8 +76,8 @@ def process_bulk_upload_template():
                     new_sheet[cell.coordinate].value = cell.value
         
         # 计算当前文件的货品范围
-        start_idx = (file_num - 1) * 2000
-        end_idx = min(file_num * 2000, total_products)
+        start_idx = (file_num - 1) * 1999
+        end_idx = min(file_num * 1999, total_products)
         
         # 获取当前批次的货品ID
         product_ids = list(grouped.groups.keys())[start_idx:end_idx]
