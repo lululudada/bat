@@ -8,7 +8,7 @@ from openpyxl.utils.dataframe import dataframe_to_rows
 
 def find_template_file():
     """在当前目录中查找包含'Bulk_Upload_Template'的Excel文件"""
-    possible_files = glob.glob('*Bulk_Upload_Template*.xlsx')
+    possible_files = glob.glob('*Bulk*.xlsx')
     if not possible_files:
         raise FileNotFoundError("未找到包含'Bulk_Upload_Template'的Excel文件")
     return possible_files[0]
