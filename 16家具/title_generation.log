@@ -1,0 +1,4 @@
+2025-06-15 18:58:08,579 - ERROR - API请求失败：400 Client Error: Bad Request for url: https://xiaoai.plus/v1/chat/completions
+2025-06-15 18:58:27,557 - ERROR - API请求失败：HTTPSConnectionPool(host='xiaoai.plus', port=443): Max retries exceeded with url: /v1/chat/completions (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x000001C205995370>, 'Connection to xiaoai.plus timed out. (connect timeout=35)'))
+2025-06-15 18:58:57,104 - ERROR - API请求失败：400 Client Error: Bad Request for url: https://xiaoai.plus/v1/chat/completions
+2025-06-15 18:59:07,626 - ERROR - API请求失败：400 Client Error: Bad Request for url: https://xiaoai.plus/v1/chat/completions
