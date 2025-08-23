@@ -59,7 +59,7 @@ def process_images():
                     scale_factor = 900 / min(new_width, new_height)
                     new_size = (int(new_width * scale_factor), int(new_height * scale_factor))
                     img = img.resize(new_size, Image.LANCZOS)
-                elif max(new_width, new_height) > 4000:
+                elif max(new_width, new_height) > 2200:
                     # 按最长边=4000等比例缩放
                     scale_factor = 2200 / max(new_width, new_height)
                     new_size = (int(new_width * scale_factor), int(new_height * scale_factor))
