@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neon Vault Login</title>
+<style>
+:root {
+  --bg: #07111f;
+  --panel: rgba(8, 16, 30, 0.72);
+  --panel-line: rgba(129, 197, 255, 0.22);
+  --text: #ecf7ff;
+  --muted: #8ea9c7;
+  --accent: #42f5d7;
+  --accent-2: #52a9ff;
+  --warn: #ff6b88;
+  --shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(82, 169, 255, 0.24), transparent 28%),
+    radial-gradient(circle at 85% 18%, rgba(66, 245, 215, 0.18), transparent 24%),
+    radial-gradient(circle at 50% 82%, rgba(255, 107, 136, 0.18), transparent 25%),
+    linear-gradient(135deg, #02060c 0%, #07111f 42%, #0d1830 100%);
+  color: var(--text);
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+}
+
+body.portal-jump .shell,
+body.portal-jump .grid {
+  animation: stageFadeOut 0.9s ease forwards;
+}
+
+body.portal-jump {
+  cursor: progress;
+}
+
+.grid {
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(113, 167, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(113, 167, 255, 0.08) 1px, transparent 1px);
+  background-size: 36px 36px;
+  mask-image: radial-gradient(circle at center, black 50%, transparent 92%);
+  pointer-events: none;
+}
+
+.transition-gate {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at center, rgba(82, 169, 255, 0.18), rgba(2, 6, 12, 0.92) 45%, #02060c 75%),
+    linear-gradient(180deg, rgba(3, 10, 18, 0.1), rgba(3, 10, 18, 0.98));
+  opacity: 0;
+  pointer-events: none;
+  z-index: 30;
+}
+
+body.portal-jump .transition-gate {
+  animation: gateReveal 1s ease forwards;
+}
+
+.gate-ring {
+  position: relative;
+  width: min(58vw, 520px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 2px solid rgba(82, 169, 255, 0.46);
+  box-shadow:
+    0 0 40px rgba(82, 169, 255, 0.28),
+    inset 0 0 50px rgba(66, 245, 215, 0.1);
+  transform: scale(0.4);
+}
+
+.gate-ring::before,
+.gate-ring::after {
+  content: "";
+  position: absolute;
+  inset: 9%;
+  border-radius: 50%;
+}
+
+.gate-ring::before {
+  border: 1px solid rgba(66, 245, 215, 0.6);
+  animation: rotateGate 2.6s linear infinite;
+}
+
+.gate-ring::after {
+  inset: 20%;
+  background: radial-gradient(circle, rgba(66, 245, 215, 0.22), rgba(82, 169, 255, 0.02) 58%, transparent 65%);
+  filter: blur(4px);
+}
+
+.gate-copy {
+  position: absolute;
+  text-align: center;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #d8f7ff;
+}
+
+.gate-copy strong {
+  display: block;
+  margin-bottom: 10px;
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  font-size: clamp(22px, 3.6vw, 40px);
+}
+
+.gate-copy span {
+  color: #96d2ff;
+  font-size: 12px;
+}
+
+.glow,
+.glow::before,
+.glow::after {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(22px);
+}
+
+.glow {
+  inset: auto;
+  width: 340px;
+  height: 340px;
+  right: -80px;
+  top: -70px;
+  background: rgba(82, 169, 255, 0.28);
+}
+
+.glow::before,
+.glow::after {
+  content: "";
+}
+
+.glow::before {
+  width: 250px;
+  height: 250px;
+  left: -180px;
+  top: 180px;
+  background: rgba(66, 245, 215, 0.16);
+}
+
+.glow::after {
+  width: 220px;
+  height: 220px;
+  right: 80px;
+  bottom: -120px;
+  background: rgba(255, 107, 136, 0.2);
+}
+
+.shell {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.stage {
+  position: relative;
+  width: min(1120px, 100%);
+  display: grid;
+  grid-template-columns: 1.08fr 0.92fr;
+  gap: 24px;
+  align-items: stretch;
+}
+
+.hero,
+.panel {
+  position: relative;
+  border: 1px solid var(--panel-line);
+  background: var(--panel);
+  backdrop-filter: blur(18px);
+  border-radius: 28px;
+  box-shadow: var(--shadow);
+}
+
+.hero {
+  padding: 44px;
+  overflow: hidden;
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 22px;
+  pointer-events: none;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  color: var(--accent);
+  background: rgba(66, 245, 215, 0.08);
+  border: 1px solid rgba(66, 245, 215, 0.22);
+  letter-spacing: 0.18em;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 16px rgba(66, 245, 215, 0.8);
+}
+
+.title {
+  margin: 28px 0 16px;
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  font-size: clamp(52px, 7vw, 96px);
+  line-height: 0.95;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-shadow: 0 0 28px rgba(82, 169, 255, 0.25);
+}
+
+.title span {
+  display: block;
+  color: #7dddff;
+}
+
+.lead {
+  max-width: 520px;
+  margin: 0 0 28px;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.stat {
+  padding: 18px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.stat strong {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 28px;
+  color: #ffffff;
+}
+
+.stat span {
+  color: var(--muted);
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.panel {
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.panel-head {
+  margin-bottom: 20px;
+}
+
+.panel-head small {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--accent);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.panel-head h2 {
+  margin: 0 0 8px;
+  font-size: 34px;
+}
+
+.panel-head p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.field {
+  margin-bottom: 14px;
+}
+
+.field label {
+  display: block;
+  margin-bottom: 8px;
+  color: #dbe8ff;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.input-wrap {
+  position: relative;
+}
+
+.input-wrap::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(82, 169, 255, 0.2), rgba(66, 245, 215, 0.08));
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+input {
+  width: 100%;
+  padding: 18px 18px 18px 54px;
+  border-radius: 16px;
+  border: 1px solid rgba(138, 180, 255, 0.16);
+  background: rgba(5, 10, 20, 0.9);
+  color: var(--text);
+  font-size: 15px;
+  outline: none;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input:focus {
+  transform: translateY(-1px);
+  border-color: rgba(66, 245, 215, 0.5);
+  box-shadow: 0 0 0 4px rgba(66, 245, 215, 0.12);
+}
+
+input:focus + .icon,
+.input-wrap:focus-within::before {
+  opacity: 1;
+}
+
+.icon {
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  width: 22px;
+  height: 22px;
+  transform: translateY(-50%);
+  opacity: 0.72;
+}
+
+.icon::before,
+.icon::after {
+  content: "";
+  position: absolute;
+}
+
+.icon.user::before {
+  width: 10px;
+  height: 10px;
+  left: 6px;
+  top: 0;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.icon.user::after {
+  width: 18px;
+  height: 9px;
+  left: 2px;
+  bottom: 0;
+  border-radius: 10px 10px 6px 6px;
+  background: currentColor;
+}
+
+.icon.lock::before {
+  width: 14px;
+  height: 10px;
+  left: 4px;
+  top: 0;
+  border: 2px solid currentColor;
+  border-bottom: none;
+  border-radius: 10px 10px 0 0;
+}
+
+.icon.lock::after {
+  width: 18px;
+  height: 14px;
+  left: 2px;
+  bottom: 0;
+  border-radius: 5px;
+  background: currentColor;
+}
+
+.meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 8px 0 18px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.meta span:last-child {
+  color: #8dd8ff;
+}
+
+button {
+  position: relative;
+  width: 100%;
+  padding: 17px 20px;
+  border: 0;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #52a9ff 0%, #42f5d7 55%, #98ff7a 100%);
+  color: #03111f;
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  font-size: 24px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+  box-shadow: 0 18px 36px rgba(66, 245, 215, 0.24);
+}
+
+button::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 20%, rgba(255, 255, 255, 0.5) 50%, transparent 78%);
+  transform: translateX(-120%);
+}
+
+button:hover {
+  transform: translateY(-2px) scale(1.01);
+  filter: saturate(1.05);
+  box-shadow: 0 22px 44px rgba(82, 169, 255, 0.28);
+}
+
+button:hover::after {
+  animation: sweep 1.1s ease;
+}
+
+button:disabled {
+  opacity: 0.78;
+  cursor: wait;
+  transform: none;
+}
+
+#msg {
+  min-height: 22px;
+  margin-top: 14px;
+  color: var(--warn);
+  font-size: 14px;
+}
+
+.footer-note {
+  margin-top: 16px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+@keyframes sweep {
+  from {
+    transform: translateX(-120%);
+  }
+
+  to {
+    transform: translateX(120%);
+  }
+}
+
+@keyframes gateReveal {
+  0% {
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes rotateGate {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes stageFadeOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(1.04);
+    filter: blur(10px);
+  }
+}
+
+@media (max-width: 940px) {
+  body {
+    overflow: auto;
+  }
+
+  .stage {
+    grid-template-columns: 1fr;
+  }
+
+  .hero,
+  .panel {
+    padding: 28px;
+  }
+
+  .title {
+    font-size: clamp(44px, 14vw, 76px);
+  }
+}
+
+@media (max-width: 560px) {
+  .shell {
+    padding: 16px;
+  }
+
+  .stats {
+    grid-template-columns: 1fr;
+  }
+
+  .panel {
+    padding: 22px;
+  }
+}
+</style>
+</head>
+<body>
+  <div class="grid"></div>
+  <div class="transition-gate">
+    <div class="gate-ring"></div>
+    <div class="gate-copy">
+      <strong>Jumping</strong>
+      <span>Preparing control deck</span>
+    </div>
+  </div>
+  <div class="shell">
+    <div class="stage">
+      <section class="hero">
+        <div class="glow"></div>
+        <div class="eyebrow">
+          <span class="dot"></span>
+          Quantum Access Layer
+        </div>
+        <h1 class="title">Neon<span>Vault</span></h1>
+        <p class="lead">
+          A cinematic control gate for your admin system. Same backend, same login flow, but now it lands like a sci-fi launch panel instead of a plain form.
+        </p>
+        <div class="stats">
+          <div class="stat">
+            <strong>24/7</strong>
+            <span>Control Channel</span>
+          </div>
+          <div class="stat">
+            <strong>3X</strong>
+            <span>Visual Impact</span>
+          </div>
+          <div class="stat">
+            <strong>0 Lag</strong>
+            <span>Same API Logic</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <small>Restricted Portal</small>
+          <h2>Sign Into Command Mode</h2>
+          <p>Use your administrator account to enter the license control console.</p>
+        </div>
+
+        <div class="field">
+          <label for="u">Username</label>
+          <div class="input-wrap">
+            <input id="u" placeholder="Enter your admin username" autocomplete="username">
+            <span class="icon user"></span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="p">Password</label>
+          <div class="input-wrap">
+            <input id="p" type="password" placeholder="Enter your secure password" autocomplete="current-password">
+            <span class="icon lock"></span>
+          </div>
+        </div>
+
+        <div class="meta">
+          <span>Encrypted session handshake</span>
+          <span>Live verification</span>
+        </div>
+
+        <button id="loginBtn" onclick="login()">Launch Access</button>
+        <div id="msg"></div>
+        <div class="footer-note">
+          Tip: this page is only a visual upgrade. Your existing `/login` API is still doing the real authentication work underneath.
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+  async function login() {
+    if (document.body.classList.contains("portal-jump")) {
+      return;
+    }
+
+    msg.textContent = "";
+    loginBtn.disabled = true;
+    loginBtn.textContent = "Verifying...";
+
+    try {
+      const response = await fetch("/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: u.value.trim(),
+          password: p.value
+        })
+      });
+
+      const result = await response.json();
+      if (result.code === 1) {
+        loginBtn.textContent = "Access Granted";
+        startPortalJump();
+        return;
+      }
+
+      msg.textContent = result.msg || "Login failed";
+    } catch (error) {
+      msg.textContent = "Network error, please try again";
+    } finally {
+      if (!document.body.classList.contains("portal-jump")) {
+        loginBtn.disabled = false;
+        loginBtn.textContent = "Launch Access";
+      }
+    }
+  }
+
+  function startPortalJump() {
+    document.body.classList.add("portal-jump");
+    sessionStorage.setItem("nv-enter-deck", "1");
+
+    window.setTimeout(function() {
+      location.href = "/index.html";
+    }, 820);
+  }
+
+  u.addEventListener("keydown", handleEnter);
+  p.addEventListener("keydown", handleEnter);
+
+  function handleEnter(event) {
+    if (event.key === "Enter") {
+      login();
+    }
+  }
+  </script>
+</body>
+</html>

@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neon Vault Control Deck</title>
+<style>
+:root {
+  --bg-1: #02070d;
+  --bg-2: #071423;
+  --bg-3: #0a1f35;
+  --panel: rgba(8, 18, 34, 0.78);
+  --panel-strong: rgba(8, 16, 29, 0.92);
+  --line: rgba(118, 183, 255, 0.18);
+  --line-bright: rgba(66, 245, 215, 0.35);
+  --text: #ecf8ff;
+  --muted: #7f9bbd;
+  --accent: #42f5d7;
+  --accent-2: #55a8ff;
+  --accent-3: #b1ff62;
+  --danger: #ff6b88;
+  --warn: #ffbe55;
+  --shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--text);
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+  background:
+    radial-gradient(circle at 15% 15%, rgba(85, 168, 255, 0.2), transparent 24%),
+    radial-gradient(circle at 85% 18%, rgba(66, 245, 215, 0.18), transparent 20%),
+    radial-gradient(circle at 60% 90%, rgba(255, 107, 136, 0.12), transparent 18%),
+    linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 45%, var(--bg-3) 100%);
+}
+
+body.deck-entry .grid {
+  animation: scanPulse 1s ease;
+}
+
+body.deck-entry .brand,
+body.deck-entry .status-bar,
+body.deck-entry .composer,
+body.deck-entry .table-shell {
+  opacity: 0;
+}
+
+body.deck-entry .brand {
+  animation: deckRise 0.7s ease forwards;
+}
+
+body.deck-entry .status-bar {
+  animation: deckRise 0.7s 0.16s ease forwards;
+}
+
+body.deck-entry .composer {
+  animation: deckRise 0.7s 0.28s ease forwards;
+}
+
+body.deck-entry .table-shell {
+  animation: deckRise 0.85s 0.38s ease forwards;
+}
+
+.grid {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(104, 168, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(104, 168, 255, 0.08) 1px, transparent 1px);
+  background-size: 34px 34px;
+  mask-image: radial-gradient(circle at center, black 55%, transparent 92%);
+}
+
+.arrival-flash {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 20;
+  background:
+    radial-gradient(circle at center, rgba(66, 245, 215, 0.22), transparent 30%),
+    linear-gradient(180deg, rgba(82, 169, 255, 0.06), rgba(2, 7, 13, 0.88));
+}
+
+body.deck-entry .arrival-flash {
+  animation: arrivalFlash 0.95s ease forwards;
+}
+
+.hud {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.topbar {
+  display: flex;
+  gap: 16px;
+  align-items: stretch;
+  margin-bottom: 18px;
+}
+
+.brand,
+.status-bar,
+.composer,
+.table-shell {
+  position: relative;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  backdrop-filter: blur(18px);
+  box-shadow: var(--shadow);
+}
+
+.brand {
+  flex: 1.1;
+  padding: 24px 28px;
+  overflow: hidden;
+}
+
+.brand::after,
+.status-bar::after,
+.composer::after,
+.table-shell::after {
+  content: "";
+  position: absolute;
+  inset: 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  pointer-events: none;
+}
+
+.brand small,
+.status-bar small,
+.composer small {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.pulse {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 16px rgba(66, 245, 215, 0.85);
+}
+
+.brand h1 {
+  margin: 18px 0 10px;
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  font-size: clamp(42px, 7vw, 72px);
+  line-height: 0.95;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.brand h1 span {
+  display: block;
+  color: #83dfff;
+}
+
+.brand p {
+  max-width: 600px;
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.status-bar {
+  flex: 0.9;
+  padding: 24px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.stat {
+  padding: 18px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.stat strong {
+  display: block;
+  margin-top: 10px;
+  font-size: 28px;
+}
+
+.stat span {
+  display: block;
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.main {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 18px;
+}
+
+.composer {
+  padding: 24px;
+  height: fit-content;
+}
+
+.composer h2,
+.table-head h2 {
+  margin: 14px 0 8px;
+  font-size: 28px;
+}
+
+.composer p,
+.table-head p {
+  margin: 0 0 18px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.field {
+  margin-bottom: 14px;
+}
+
+.field label {
+  display: block;
+  margin-bottom: 8px;
+  color: #dceaff;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.input-wrap {
+  position: relative;
+}
+
+.input-wrap::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(85, 168, 255, 0.16), rgba(66, 245, 215, 0.06));
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+input {
+  width: 100%;
+  padding: 16px 18px;
+  border-radius: 16px;
+  border: 1px solid rgba(138, 180, 255, 0.16);
+  background: rgba(4, 10, 20, 0.88);
+  color: var(--text);
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+input:focus {
+  transform: translateY(-1px);
+  border-color: var(--line-bright);
+  box-shadow: 0 0 0 4px rgba(66, 245, 215, 0.1);
+}
+
+.input-wrap:focus-within::before {
+  opacity: 1;
+}
+
+.button-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+button {
+  border: 0;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+}
+
+.action {
+  flex: 1;
+  min-width: 140px;
+  padding: 15px 18px;
+  color: #03111f;
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  font-size: 20px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.action-primary {
+  background: linear-gradient(135deg, #52a9ff 0%, #42f5d7 56%, #b1ff62 100%);
+  box-shadow: 0 16px 34px rgba(66, 245, 215, 0.2);
+}
+
+.action-danger {
+  background: linear-gradient(135deg, #ff8965 0%, #ff6b88 100%);
+  color: #fff1f3;
+  box-shadow: 0 16px 34px rgba(255, 107, 136, 0.18);
+}
+
+.chips {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+.chip {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: var(--muted);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.table-shell {
+  padding: 22px;
+}
+
+.table-head {
+  display: flex;
+  gap: 14px;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 18px;
+}
+
+.table-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.ghost-btn,
+.danger-btn,
+.tiny-btn {
+  padding: 11px 14px;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ghost-btn {
+  background: rgba(82, 169, 255, 0.12);
+  color: #a9d9ff;
+  border: 1px solid rgba(82, 169, 255, 0.16);
+}
+
+.danger-btn {
+  background: rgba(255, 107, 136, 0.14);
+  color: #ffd4dc;
+  border: 1px solid rgba(255, 107, 136, 0.2);
+}
+
+.tiny-btn {
+  background: rgba(66, 245, 215, 0.12);
+  color: #c7fff4;
+  border: 1px solid rgba(66, 245, 215, 0.16);
+}
+
+.table-wrap {
+  overflow: auto;
+  border-radius: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: var(--panel-strong);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 760px;
+}
+
+th,
+td {
+  padding: 16px 14px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: rgba(7, 18, 31, 0.94);
+  color: #a9c4e2;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+tbody tr:hover {
+  background: rgba(82, 169, 255, 0.06);
+}
+
+.id-cell {
+  font-weight: bold;
+  letter-spacing: 0.04em;
+  color: #dff6ff;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.status-pill::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.status-active {
+  color: #d7fff5;
+  background: rgba(66, 245, 215, 0.12);
+  border: 1px solid rgba(66, 245, 215, 0.18);
+}
+
+.status-active::before {
+  background: var(--accent);
+  box-shadow: 0 0 10px rgba(66, 245, 215, 0.8);
+}
+
+.status-disabled {
+  color: #ffe3ea;
+  background: rgba(255, 107, 136, 0.12);
+  border: 1px solid rgba(255, 107, 136, 0.18);
+}
+
+.status-disabled::before {
+  background: var(--danger);
+  box-shadow: 0 0 10px rgba(255, 107, 136, 0.8);
+}
+
+#msg {
+  min-height: 22px;
+  margin-bottom: 14px;
+  color: var(--muted);
+}
+
+.empty {
+  padding: 34px;
+  color: var(--muted);
+  text-align: center;
+}
+
+@keyframes arrivalFlash {
+  0% {
+    opacity: 0.95;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes deckRise {
+  0% {
+    opacity: 0;
+    transform: translateY(28px) scale(0.98);
+    filter: blur(8px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes scanPulse {
+  0% {
+    opacity: 0.4;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.7;
+  }
+}
+
+@media (max-width: 1100px) {
+  .topbar,
+  .main {
+    grid-template-columns: 1fr;
+    display: grid;
+  }
+
+  .status-bar {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .hud {
+    padding: 16px;
+  }
+
+  .status-bar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .table-head {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 560px) {
+  .status-bar {
+    grid-template-columns: 1fr;
+  }
+
+  .brand,
+  .status-bar,
+  .composer,
+  .table-shell {
+    border-radius: 22px;
+  }
+
+  .action {
+    min-width: 100%;
+  }
+}
+</style>
+</head>
+<body>
+  <div class="grid"></div>
+  <div class="arrival-flash"></div>
+  <div class="hud">
+    <section class="topbar">
+      <div class="brand">
+        <small><span class="pulse"></span> Command bridge online</small>
+        <h1>Control<span>Deck</span></h1>
+        <p>
+          Welcome to the starship license console. Add pilots, disable access, and monitor active authorization lanes from one neon-lit bridge.
+        </p>
+      </div>
+
+      <div class="status-bar">
+        <div class="stat">
+          <small>Telemetry</small>
+          <strong id="totalCount">0</strong>
+          <span>Total licenses</span>
+        </div>
+        <div class="stat">
+          <small>Green zone</small>
+          <strong id="activeCount">0</strong>
+          <span>Active units</span>
+        </div>
+        <div class="stat">
+          <small>Red zone</small>
+          <strong id="disabledCount">0</strong>
+          <span>Disabled units</span>
+        </div>
+        <div class="stat">
+          <small>Sync state</small>
+          <strong id="syncState">Idle</strong>
+          <span>Deck status</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="main">
+      <aside class="composer">
+        <small><span class="pulse"></span> Access composer</small>
+        <h2>Issue New License</h2>
+        <p>Register a new control key and send it into the live system without leaving the bridge.</p>
+
+        <div class="field">
+          <label for="phone">Phone Signal</label>
+          <div class="input-wrap">
+            <input id="phone" placeholder="Example: 13800138000">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="account">Pilot Name</label>
+          <div class="input-wrap">
+            <input id="account" placeholder="Account name">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="expire">Dock Until</label>
+          <div class="input-wrap">
+            <input id="expire" type="datetime-local">
+          </div>
+        </div>
+
+        <div class="button-row">
+          <button class="action action-primary" onclick="add()">Deploy</button>
+          <button class="action action-danger" onclick="deleteBatch()">Purge</button>
+        </div>
+
+        <div class="chips">
+          <div class="chip">Real-time sync</div>
+          <div class="chip">Session protected</div>
+          <div class="chip">Single bridge console</div>
+        </div>
+      </aside>
+
+      <section class="table-shell">
+        <div class="table-head">
+          <div>
+            <small><span class="pulse"></span> Fleet registry</small>
+            <h2>Live License Matrix</h2>
+            <p>Monitor all access records, toggle state, and clean expired entries from a single tactical grid.</p>
+          </div>
+          <div class="table-actions">
+            <button class="ghost-btn" onclick="load()">Refresh Grid</button>
+            <button class="danger-btn" onclick="logout()">Logout</button>
+          </div>
+        </div>
+
+        <div id="msg">Deck ready</div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th><input type="checkbox" onclick="toggleAll(this)"></th>
+                <th>Phone</th>
+                <th>Account</th>
+                <th>Expire Time</th>
+                <th>Status</th>
+                <th>Controls</th>
+              </tr>
+            </thead>
+            <tbody id="tb"></tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+  </div>
+
+  <script>
+  (function playDeckEntry() {
+    if (sessionStorage.getItem("nv-enter-deck") === "1") {
+      document.body.classList.add("deck-entry");
+      sessionStorage.removeItem("nv-enter-deck");
+
+      window.setTimeout(function() {
+        document.body.classList.remove("deck-entry");
+      }, 1400);
+    }
+  })();
+
+  function setMessage(text, isError = false) {
+    msg.textContent = text;
+    msg.style.color = isError ? "#ff8aa5" : "#7f9bbd";
+    syncState.textContent = isError ? "Alert" : "Synced";
+    syncState.style.color = isError ? "#ff8aa5" : "#dff8ff";
+  }
+
+  async function requestJson(url, options = {}) {
+    const response = await fetch(url, options);
+    const result = await response.json();
+
+    if (result.code === 401) {
+      location.href = "/";
+      throw new Error("LOGIN_REQUIRED");
+    }
+
+    return result;
+  }
+
+  function updateStats(items) {
+    const total = items.length;
+    const active = items.filter(function(item) {
+      return item.status === 1;
+    }).length;
+    const disabled = total - active;
+
+    totalCount.textContent = total;
+    activeCount.textContent = active;
+    disabledCount.textContent = disabled;
+  }
+
+  function renderRows(items) {
+    updateStats(items);
+
+    if (!items.length) {
+      tb.innerHTML = '<tr><td colspan="6" class="empty">No ships in the registry</td></tr>';
+      return;
+    }
+
+    let html = "";
+    items.forEach(function(item) {
+      const isActive = item.status === 1;
+      const statusClass = isActive ? "status-active" : "status-disabled";
+      const statusText = isActive ? "Active" : "Disabled";
+      const toggleText = isActive ? "Disable" : "Enable";
+      const safePhone = item.phone || "";
+
+      html += `
+        <tr>
+          <td><input type="checkbox" class="ck" value="${safePhone}"></td>
+          <td class="id-cell">${safePhone}</td>
+          <td>${item.account_name || ""}</td>
+          <td>${item.expire_date || ""}</td>
+          <td><span class="status-pill ${statusClass}">${statusText}</span></td>
+          <td>
+            <button class="tiny-btn" onclick="toggle('${safePhone}')">${toggleText}</button>
+            <button class="danger-btn" onclick="del('${safePhone}')">Delete</button>
+          </td>
+        </tr>
+      `;
+    });
+
+    tb.innerHTML = html;
+  }
+
+  async function load() {
+    msg.textContent = "Scanning fleet registry...";
+    msg.style.color = "#7f9bbd";
+    syncState.textContent = "Scanning";
+    syncState.style.color = "#ffe8b3";
+
+    try {
+      const result = await requestJson("/api/list");
+      renderRows(result.data || []);
+      setMessage("Registry synchronized");
+    } catch (error) {
+      if (error.message !== "LOGIN_REQUIRED") {
+        setMessage("Grid sync failed, retry advised", true);
+      }
+    }
+  }
+
+  async function add() {
+    syncState.textContent = "Deploying";
+    syncState.style.color = "#ffe8b3";
+
+    try {
+      const result = await requestJson("/api/add", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          phone: phone.value.trim(),
+          account_name: account.value.trim(),
+          expire: expire.value
+        })
+      });
+
+      if (result.code !== 1) {
+        setMessage(result.msg || "Deploy failed", true);
+        return;
+      }
+
+      setMessage(result.msg || "License deployed");
+      phone.value = "";
+      account.value = "";
+      expire.value = "";
+      load();
+    } catch (error) {
+      if (error.message !== "LOGIN_REQUIRED") {
+        setMessage("Deploy failed, network unstable", true);
+      }
+    }
+  }
+
+  async function del(phoneValue) {
+    if (!confirm("Delete this record from the registry?")) {
+      return;
+    }
+
+    syncState.textContent = "Purging";
+    syncState.style.color = "#ffe8b3";
+
+    try {
+      const result = await requestJson("/api/delete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone: phoneValue })
+      });
+
+      setMessage(result.msg || "Record deleted");
+      load();
+    } catch (error) {
+      if (error.message !== "LOGIN_REQUIRED") {
+        setMessage("Delete failed, retry advised", true);
+      }
+    }
+  }
+
+  async function toggle(phoneValue) {
+    syncState.textContent = "Reconfiguring";
+    syncState.style.color = "#ffe8b3";
+
+    try {
+      const result = await requestJson("/api/toggle", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone: phoneValue })
+      });
+
+      if (result.code !== 1) {
+        setMessage(result.msg || "Status update failed", true);
+        return;
+      }
+
+      setMessage(result.msg || "Unit status updated");
+      load();
+    } catch (error) {
+      if (error.message !== "LOGIN_REQUIRED") {
+        setMessage("Status update failed, retry advised", true);
+      }
+    }
+  }
+
+  function toggleAll(source) {
+    document.querySelectorAll(".ck").forEach(function(checkbox) {
+      checkbox.checked = source.checked;
+    });
+  }
+
+  async function deleteBatch() {
+    const phones = [];
+    document.querySelectorAll(".ck:checked").forEach(function(checkbox) {
+      phones.push(checkbox.value);
+    });
+
+    if (!phones.length) {
+      setMessage("Select targets before purge", true);
+      return;
+    }
+
+    if (!confirm("Purge selected records from the registry?")) {
+      return;
+    }
+
+    syncState.textContent = "Purging";
+    syncState.style.color = "#ffe8b3";
+
+    try {
+      const result = await requestJson("/api/delete_batch", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phones: phones })
+      });
+
+      if (result.code !== 1) {
+        setMessage(result.msg || "Batch purge failed", true);
+        return;
+      }
+
+      setMessage(result.msg || "Batch purge complete");
+      load();
+    } catch (error) {
+      if (error.message !== "LOGIN_REQUIRED") {
+        setMessage("Batch purge failed, retry advised", true);
+      }
+    }
+  }
+
+  async function logout() {
+    await fetch("/logout", { method: "POST" });
+    location.href = "/";
+  }
+
+  load();
+  </script>
+</body>
+</html>
