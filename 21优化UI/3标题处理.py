@@ -114,6 +114,10 @@ def compress_image(img_path):
 
 # ================= API =================
 def generate_title(base64_image):
+    """
+    成功时返回 (标题文本, None)
+    失败时返回 (None, 错误详情字符串)
+    """
     try:
         headers = {
             "Authorization": f"Bearer {config['api_key']}"
@@ -140,10 +144,24 @@ def generate_title(base64_image):
             timeout=30
         )
 
-        return r.json()['choices'][0]['message']['content']
+        data = r.json()
 
-    except Exception:
-        return None
+        # API 返回了 error 字段（模型不支持/未开通/参数错误等）
+        if "error" in data:
+            err_msg = data["error"].get("message", str(data["error"])) if isinstance(data["error"], dict) else str(data["error"])
+            return None, f"HTTP{r.status_code} | {err_msg}"
+
+        if "choices" not in data:
+            return None, f"HTTP{r.status_code} | 返回异常: {json.dumps(data, ensure_ascii=False)[:200]}"
+
+        return data['choices'][0]['message']['content'], None
+
+    except requests.exceptions.Timeout:
+        return None, "请求超时"
+    except requests.exceptions.RequestException as e:
+        return None, f"网络错误: {e}"
+    except Exception as e:
+        return None, f"未知异常: {e}"
 
 # ================= 单行处理 =================
 def process_row(row, base_path, filename):
@@ -158,10 +176,10 @@ def process_row(row, base_path, filename):
             return {"row": row, "status": "fail", "title": "COMPRESS_FAIL"}
 
         base64_img = base64.b64encode(img).decode()
-        title = generate_title(base64_img)
+        title, err = generate_title(base64_img)
 
         if not title:
-            return {"row": row, "status": "fail", "title": "API_FAIL"}
+            return {"row": row, "status": "fail", "title": f"API_FAIL | {err}"}
 
         return {"row": row, "status": "success", "title": title.strip()}
 
@@ -219,6 +237,7 @@ def run_task():
 
             else:
                 with LOCK:
+                    # Excel 里只写 FAIL 前缀，方便"跳过已处理"逻辑判断；详细原因看日志
                     sheet.cell(row=row, column=9).value = "FAIL"
                     wb.save(config["excel_path"])
 
